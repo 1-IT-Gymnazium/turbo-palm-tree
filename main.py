@@ -13,7 +13,7 @@ class Game:
         grid_width = 10  # Number of columns
         grid_height = 10  # Number of rows
         self.cell_size = 40  # Size of each grid cell
-        self.margin = 40     # Size of margin
+        self.margin = 160     # Size of margin
         self.grid_total_width = grid_width * self.cell_size
         self.grid_total_height = grid_height * self.cell_size
 
@@ -23,6 +23,20 @@ class Game:
         self.black = pygame.Color('#000000')
         self.white = pygame.Color('#ffffff')
 
+        self.p1_grid = [[0 for x in range(grid_width)] for x in range(grid_height)]
+        self.p2_grid = [[0 for x in range(grid_width)] for x in range(grid_height)]
+
+    # def place_ship(self, ship_length, ship_positions):  #1-4, [(2, 2), (3, 2), (4, 2)]
+    #     if ship_positions[()]
+    #     for x,y in(ship_positions):
+    #         if self.p1_grid[y][x] == 0:
+    #             self.p1_grid[ship_positions[x,y]] = 1
+    #
+    # def rotate_ship(self, ship_length, ship_positions):
+    #     is_horizontal = all(y == ship_positions[0][1] for x, y in ship_positions)
+    #     if is_horizontal:
+    #         for x,y in(ship_positions):
+    #             if
     def draw_single_grid(self, x, y):
         for x_pos in range(x, x + self.grid_total_width, self.cell_size):
             for y_pos in range(y, y + self.grid_total_height, self.cell_size):
