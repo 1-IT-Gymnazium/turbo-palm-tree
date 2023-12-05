@@ -38,8 +38,11 @@ class Game:
             pass
 
 
-    def rotate_ship(self, ship_positions):
-        pass
+    def rotate_ship(self, ship_position): # input example B4
+        for key, values in self.p1_all_ships_id.items():
+            for value in values:
+                if value == ship_position:
+                    pass
 
     def check_valid_placement(self, ship_positions):        #1-4, [2, 2], [2][3], [2][4]], p1_grid[0[0]]
         for position in ship_positions:
@@ -62,6 +65,21 @@ class Game:
         for coord in input:
             coords.append(f"{chr(coord[0] + 64)}{coord[1]}")
         return coords
+
+    def get_mouse_pos(self):
+        mouse_position = pygame.mouse.get_pos()
+        grid_coord = False
+        ship_id = False
+        for key, value in self.p1_grid_pos.items():
+            if mouse_position[0] in range(value[0], (value[0] + self.cell_size) + 1) and  mouse_position[1] in range(value[1], (value[1] + self.cell_size) + 1):
+                grid_coord = key
+                for inner_key, inner_value in self.p1_all_ships_id.items():
+                    for part_coord in inner_value:
+                        if part_coord == grid_coord:
+                            ship_id = inner_key
+                        continue
+        return [mouse_position, grid_coord, ship_id]
+
 
     def draw_single_grid(self, x, y, num_grids):
         column_char = 65
@@ -94,17 +112,16 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     running = False  # Exit the game when the Esc key is pressed
-
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.rotate_ship(self.get_mouse_pos())
+                    elif event.button == 3:
+                        self.delete_ship(self.get_mouse_pos())
 
             self.screen.fill((0, 0, 0))  # Clear the screen with a black background
             self.draw_grids(1, self.margin)  # Draw the grid
-            if pygame.mouse.get_pressed():
-                if pygame.mouse.get_pressed()[0]:
-                    self.rotate_ship(self.get_mouse_pos())
-                elif pygame.mouse.get_pressed()[1]:
-                    self.delete_ship(self.get_mouse_pos())
             self.place_ship([[2, 2], [2, 3], [2, 4], [2,5]])
             self.place_ship([[8, 10], [8, 9], [8, 7], [8,8]])
             self.place_ship([[3,6]])
