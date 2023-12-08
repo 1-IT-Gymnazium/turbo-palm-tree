@@ -38,11 +38,15 @@ class Game:
             pass
 
 
-    def rotate_ship(self, ship_position): # input example B4
-        for key, values in self.p1_all_ships_id.items():
-            for value in values:
-                if value == ship_position:
-                    pass
+    def rotate_ship(self, get_mouse_position_output):
+        mouse_position = get_mouse_position_output[0]
+        grid_coord = get_mouse_position_output[1]
+        ship_id = get_mouse_position_output[2]
+        if ship_id != False:
+            # switch all ship positions and rewrite the player grid by ship ID
+            pass
+
+
 
     def check_valid_placement(self, ship_positions):        #1-4, [2, 2], [2][3], [2][4]], p1_grid[0[0]]
         for position in ship_positions:
@@ -78,6 +82,7 @@ class Game:
                         if part_coord == grid_coord:
                             ship_id = inner_key
                         continue
+            break   # when the grid_coord and all possible ship positions on that coord are checked, it doesnt check the rest of the grid
         return [mouse_position, grid_coord, ship_id]
 
 
