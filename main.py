@@ -13,7 +13,7 @@ class Game:
         self.grid_width = 10  # Number of columns
         self.grid_height = 10  # Number of rows
         self.cell_size = 40  # Size of each grid cell
-        self.margin = 160     # Size of margin
+        self.margin = 160  # Size of margin
         self.grid_total_width = self.grid_width * self.cell_size
         self.grid_total_height = self.grid_height * self.cell_size
 
@@ -24,19 +24,23 @@ class Game:
         self.white = pygame.Color('#ffffff')
 
         self.p1_grid = [[0 for x in range(self.grid_width)] for x in range(self.grid_height)]
-        self.p1_grid_pos = {} # All grid cells coords and pixel positions
-        self.p1_all_ships_id = {} # key SHIP_ID, value list of ship position coords
+        self.p1_grid_pos = {}  # All grid cells coords and pixel positions
+        self.p1_all_ships_id = {}  # key SHIP_ID, value list of ship position coords
         self.p2_grid = [[0 for x in range(self.grid_width)] for x in range(self.grid_height)]
         self.p2_grid_pos = {}
 
-    def place_ship(self, ship_positions):               # 1-4, [[2, 2], [2,3], [2,4]], p1_grid[0[0]]
+    def place_ship(self, ship_positions):  # 1-4, [[2, 2], [2,3], [2,4]], p1_grid[0[0]]
+        """
+
+        :param ship_positions:
+        :return:
+        """
         if self.check_valid_placement(ship_positions):
             self.p1_all_ships_id[len(self.p1_all_ships_id)] = self.get_coords(ship_positions)
             for position in ship_positions:
                 self.p1_grid[position[1] - 1][position[0] - 1] = 1
         else:
             pass
-
 
     def rotate_ship(self, get_mouse_position_output):
         mouse_position = get_mouse_position_output[0]
@@ -46,14 +50,12 @@ class Game:
             # switch all ship positions and rewrite the player grid by ship ID
             pass
 
-
-
-    def check_valid_placement(self, ship_positions):        #1-4, [2, 2], [2][3], [2][4]], p1_grid[0[0]]
+    def check_valid_placement(self, ship_positions):  # 1-4, [2, 2], [2][3], [2][4]], p1_grid[0[0]]
         for position in ship_positions:
             grid_pos_x = position[0] - 1
             grid_pos_y = position[1] - 1
             for y in range(max(0, grid_pos_y - 1), min(self.grid_height, grid_pos_y + 2)):
-               for x in range(max(0, grid_pos_x - 1), min(self.grid_width, grid_pos_x + 2)):
+                for x in range(max(0, grid_pos_x - 1), min(self.grid_width, grid_pos_x + 2)):
                     if self.p1_grid[y][x] != 0:
                         return False
             return True
@@ -61,10 +63,10 @@ class Game:
     def draw_all_ships(self):
         for ship in self.p1_all_ships_id:
             for part in self.p1_all_ships_id[ship]:
-                pygame.draw.rect(self.screen, self.white, (self.p1_grid_pos[f"{part}"][0], self.p1_grid_pos[f"{part}"][1], self.cell_size, self.cell_size), 0)
+                pygame.draw.rect(self.screen, self.white, (
+                self.p1_grid_pos[f"{part}"][0], self.p1_grid_pos[f"{part}"][1], self.cell_size, self.cell_size), 0)
 
-
-    def get_coords(self, input):  #Change from [3][5]([y][x]) to E3
+    def get_coords(self, input):  # Change from [3][5]([y][x]) to E3
         coords = []
         for coord in input:
             coords.append(f"{chr(coord[0] + 64)}{coord[1]}")
@@ -75,16 +77,16 @@ class Game:
         grid_coord = False
         ship_id = False
         for key, value in self.p1_grid_pos.items():
-            if mouse_position[0] in range(value[0], (value[0] + self.cell_size) + 1) and  mouse_position[1] in range(value[1], (value[1] + self.cell_size) + 1):
+            if mouse_position[0] in range(value[0], (value[0] + self.cell_size) + 1) and mouse_position[1] in range(
+                    value[1], (value[1] + self.cell_size) + 1):
                 grid_coord = key
                 for inner_key, inner_value in self.p1_all_ships_id.items():
                     for part_coord in inner_value:
                         if part_coord == grid_coord:
                             ship_id = inner_key
                         continue
-            break   # when the grid_coord and all possible ship positions on that coord are checked, it doesnt check the rest of the grid
+            break  # when the grid_coord and all possible ship positions on that coord are checked, it doesnt check the rest of the grid
         return [mouse_position, grid_coord, ship_id]
-
 
     def draw_single_grid(self, x, y, num_grids):
         column_char = 65
@@ -127,10 +129,10 @@ class Game:
 
             self.screen.fill((0, 0, 0))  # Clear the screen with a black background
             self.draw_grids(1, self.margin)  # Draw the grid
-            self.place_ship([[2, 2], [2, 3], [2, 4], [2,5]])
-            self.place_ship([[8, 10], [8, 9], [8, 7], [8,8]])
-            self.place_ship([[3,6]])
-            self.place_ship([[7,6]])
+            self.place_ship([[2, 2], [2, 3], [2, 4], [2, 5]])
+            self.place_ship([[8, 10], [8, 9], [8, 7], [8, 8]])
+            self.place_ship([[3, 6]])
+            self.place_ship([[7, 6]])
             self.draw_all_ships()
             pygame.display.flip()
             clock.tick(60)  # Limit the frame rate to 60 frames per second
