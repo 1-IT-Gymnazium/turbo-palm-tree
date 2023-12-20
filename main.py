@@ -50,7 +50,7 @@ class Game:
             # switch all ship positions and rewrite the player grid by ship ID
             pass
 
-    def check_valid_placement(self, ship_positions):  # 1-4, [2, 2], [2][3], [2][4]], p1_grid[0[0]]
+    def check_valid_placement(self, ship_positions):
         for position in ship_positions:
             grid_pos_x = position[0] - 1
             grid_pos_y = position[1] - 1
@@ -58,7 +58,7 @@ class Game:
                 for x in range(max(0, grid_pos_x - 1), min(self.grid_width, grid_pos_x + 2)):
                     if self.p1_grid[y][x] != 0:
                         return False
-            return True
+        return True
 
     def draw_all_ships(self):
         for ship in self.p1_all_ships_id:
@@ -131,8 +131,7 @@ class Game:
             self.draw_grids(1, self.margin)  # Draw the grid
             self.place_ship([[2, 2], [2, 3], [2, 4], [2, 5]])
             self.place_ship([[8, 10], [8, 9], [8, 7], [8, 8]])
-            self.place_ship([[3, 6]])
-            self.place_ship([[7, 6]])
+            self.place_ship([[6,7],[7,7],[8,7]])
             self.draw_all_ships()
             pygame.display.flip()
             clock.tick(60)  # Limit the frame rate to 60 frames per second
