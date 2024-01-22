@@ -46,9 +46,28 @@ class Game:
         mouse_position = get_mouse_position_output[0]
         grid_coord = get_mouse_position_output[1]
         ship_id = get_mouse_position_output[2]
-        if ship_id != False:
-            # switch all ship positions and rewrite the player grid by ship ID
-            pass
+        if isinstance(ship_id, int):
+            # Get the current ship positions
+            current_ship_positions = self.p1_all_ships_id[ship_id]
+
+            for position in current_ship_positions:
+                for letter, number in position:
+                    ascii(letter) - 64
+            # Check if the new positions are valid
+            if self.check_valid_placement(new_ship_positions):
+                # Update p1_grid by clearing the old ship positions
+                for pos in current_ship_positions:
+                    self.p1_grid[pos[1] - 1][pos[0] - 1] = 0
+
+                # Update p1_grid with the new ship positions
+                for pos in new_ship_positions:
+                    self.p1_grid[pos[1] - 1][pos[0] - 1] = 1
+
+                # Update the ship positions in the dictionary
+                self.p1_all_ships_id[ship_id] = new_ship_positions
+            else:
+                # Handle invalid rotation (optional)
+                pass
 
     def check_valid_placement(self, ship_positions):
         for position in ship_positions:
@@ -84,8 +103,7 @@ class Game:
                     for part_coord in inner_value:
                         if part_coord == grid_coord:
                             ship_id = inner_key
-                        continue
-            break  # when the grid_coord and all possible ship positions on that coord are checked, it doesnt check the rest of the grid
+                        break  # when the grid_coord and all possible ship positions on that coord are checked, it doesnt check the rest of the grid
         return [mouse_position, grid_coord, ship_id]
 
     def draw_single_grid(self, x, y, num_grids):
