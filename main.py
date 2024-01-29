@@ -42,6 +42,12 @@ class Game:
         else:
             pass
 
+    def delete_ship(self, get_mouse_output):
+        del self.p1_all_ships_id[f'{get_mouse_output[2]}']
+        self.delete_ship_from_grid()
+    def delete_ship_from_grid(self, ship_positions):
+        
+
     def rotate_ship(self, get_mouse_position_output):
         mouse_position = get_mouse_position_output[0]
         grid_coord = get_mouse_position_output[1]
@@ -49,12 +55,21 @@ class Game:
         if isinstance(ship_id, int):
             # Get the current ship positions
             current_ship_positions = self.p1_all_ships_id[ship_id]
+            new_ship_positions = []
 
             for position in current_ship_positions:
-                for letter, number in position:
-                    ascii(letter) - 64
+                a = ord(position[0]) - 64
+                b = position[1]
+                new_ship_positions.append([int(b),int(a)])
+
+            p1_grid_copy = self.delete_ship_from_grid(current_ship_positions ,self.p1_grid) #smazat v copy puvodni pozici, aby check valid nekontroloval novou pozici se starou, udelam funkci na mazani z gridu
+
+
+
+
             # Check if the new positions are valid
             if self.check_valid_placement(new_ship_positions):
+                self.get_coords(new_ship_positions)
                 # Update p1_grid by clearing the old ship positions
                 for pos in current_ship_positions:
                     self.p1_grid[pos[1] - 1][pos[0] - 1] = 0
@@ -71,8 +86,8 @@ class Game:
 
     def check_valid_placement(self, ship_positions):
         for position in ship_positions:
-            grid_pos_x = position[0] - 1
             grid_pos_y = position[1] - 1
+            grid_pos_x = position[0] - 1
             for y in range(max(0, grid_pos_y - 1), min(self.grid_height, grid_pos_y + 2)):
                 for x in range(max(0, grid_pos_x - 1), min(self.grid_width, grid_pos_x + 2)):
                     if self.p1_grid[y][x] != 0:
