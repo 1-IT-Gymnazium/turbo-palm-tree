@@ -1,5 +1,5 @@
 import pygame
-
+import  copy
 
 class Game:
     def __init__(self):
@@ -42,47 +42,47 @@ class Game:
         else:
             pass
 
-    def delete_ship(self, get_mouse_output):
-        del self.p1_all_ships_id[f'{get_mouse_output[2]}']
-        self.delete_ship_from_grid()
+    def delete_ship(self, get_mouse_position_output):
+        if type(get_mouse_position_output[2]) == int:
+            self.delete_ship_from_grid(self.p1_all_ships_id[get_mouse_position_output[2]])
+            self.delete_ship_from_dict(get_mouse_position_output[2])
+
     def delete_ship_from_grid(self, ship_positions):
-        
+        for count, ele in enumerate(ship_positions):
+            grid_pos = self.get_grid_pos_from_coords(ele)
+            self.p1_grid[grid_pos[0]][grid_pos[1]] = 0
+    def delete_ship_from_dict(self, get_ship_id):
+        del self.p1_all_ships_id[get_ship_id]
 
     def rotate_ship(self, get_mouse_position_output):
-        mouse_position = get_mouse_position_output[0]
-        grid_coord = get_mouse_position_output[1]
-        ship_id = get_mouse_position_output[2]
-        if isinstance(ship_id, int):
-            # Get the current ship positions
-            current_ship_positions = self.p1_all_ships_id[ship_id]
-            new_ship_positions = []
+        if type(get_mouse_position_output[2]) == int:
+            mouse_position = get_mouse_position_output[0]
+            grid_coord = get_mouse_position_output[1]
+            ship_id = get_mouse_position_output[2]
+            if isinstance(ship_id, int):
+                p1_grid_original_position = copy.deepcopy(self.p1_grid)
 
-            for position in current_ship_positions:
-                a = ord(position[0]) - 64
-                b = position[1]
-                new_ship_positions.append([int(b),int(a)])
+                # Get the current ship positions
+                current_ship_positions = self.p1_all_ships_id[ship_id]
+                new_ship_positions = []
 
-            p1_grid_copy = self.delete_ship_from_grid(current_ship_positions ,self.p1_grid) #smazat v copy puvodni pozici, aby check valid nekontroloval novou pozici se starou, udelam funkci na mazani z gridu
+                for position in current_ship_positions:
+                    a = ord(position[0]) - 64
+                    b = position[1]
+                    new_ship_positions.append([int(b),a])
 
+                self.delete_ship_from_grid(current_ship_positions) #smazat v copy puvodni pozici, aby check valid nekontroloval novou pozici se starou, udelam funkci na mazani z gridu
 
+                # Check if the new positions are valid
+                if self.check_valid_placement(new_ship_positions):
+                    self.place_ship(new_ship_positions)
 
-
-            # Check if the new positions are valid
-            if self.check_valid_placement(new_ship_positions):
-                self.get_coords(new_ship_positions)
-                # Update p1_grid by clearing the old ship positions
-                for pos in current_ship_positions:
-                    self.p1_grid[pos[1] - 1][pos[0] - 1] = 0
-
-                # Update p1_grid with the new ship positions
-                for pos in new_ship_positions:
-                    self.p1_grid[pos[1] - 1][pos[0] - 1] = 1
-
-                # Update the ship positions in the dictionary
-                self.p1_all_ships_id[ship_id] = new_ship_positions
-            else:
-                # Handle invalid rotation (optional)
-                pass
+                    # Update the ship positions in the dictionary
+                    # self.p1_all_ships_id[ship_id] = self.get_coords(new_ship_positions)
+                    self.delete_ship_from_dict(ship_id)
+                else:
+                    # Handle invalid rotation (optional)
+                    pass
 
     def check_valid_placement(self, ship_positions):
         for position in ship_positions:
@@ -106,6 +106,12 @@ class Game:
             coords.append(f"{chr(coord[0] + 64)}{coord[1]}")
         return coords
 
+    def get_grid_pos_from_coords(self, input):
+        if isinstance(input, str):
+            positionY = int(input[1]) - 1
+            positionX = ord(input[0]) - 65
+        return positionY, positionX
+
     def get_mouse_pos(self):
         mouse_position = pygame.mouse.get_pos()
         grid_coord = False
@@ -118,7 +124,6 @@ class Game:
                     for part_coord in inner_value:
                         if part_coord == grid_coord:
                             ship_id = inner_key
-                        break  # when the grid_coord and all possible ship positions on that coord are checked, it doesnt check the rest of the grid
         return [mouse_position, grid_coord, ship_id]
 
     def draw_single_grid(self, x, y, num_grids):
@@ -148,6 +153,11 @@ class Game:
     def run_game(self):
         running = True
         clock = pygame.time.Clock()
+        # self.place_ship([[2, 2], [2, 3], [2, 4], [2, 5]])
+        # self.place_ship([[8, 10], [8, 9], [8, 7], [8, 8]])
+        # self.place_ship([[6, 7], [7, 7], [8, 7]])
+        self.place_ship([[4, 4], [5, 4], [6, 4]])
+        # self.place_ship([[5, 5], [5, 6]])
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -162,9 +172,6 @@ class Game:
 
             self.screen.fill((0, 0, 0))  # Clear the screen with a black background
             self.draw_grids(1, self.margin)  # Draw the grid
-            self.place_ship([[2, 2], [2, 3], [2, 4], [2, 5]])
-            self.place_ship([[8, 10], [8, 9], [8, 7], [8, 8]])
-            self.place_ship([[6,7],[7,7],[8,7]])
             self.draw_all_ships()
             pygame.display.flip()
             clock.tick(60)  # Limit the frame rate to 60 frames per second
