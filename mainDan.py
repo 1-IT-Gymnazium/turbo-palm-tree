@@ -90,7 +90,6 @@ class Game:
 
         pygame.quit()
 
-
 if __name__ == "__main__":
     game = Game()
     game.add_ship([[2, 2], [2, 3], [2, 4], [2, 5]])

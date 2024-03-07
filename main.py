@@ -36,7 +36,7 @@ class Game:
         :return:
         """
         if self.check_valid_placement(ship_positions):
-            self.p1_all_ships_id[len(self.p1_all_ships_id)] = self.get_coords(ship_positions)
+            self.p1_all_ships_id[len(self.p1_all_ships_id) + 1] = self.get_coords(ship_positions)
             for position in ship_positions:
                 self.p1_grid[position[1] - 1][position[0] - 1] = 1
         else:
@@ -79,7 +79,7 @@ class Game:
 
                     # Update the ship positions in the dictionary
                     # self.p1_all_ships_id[ship_id] = self.get_coords(new_ship_positions)
-                    self.delete_ship_from_dict(ship_id)
+                    # self.delete_ship_from_dict(ship_id)
                 else:
                     # Handle invalid rotation (optional)
                     pass
@@ -153,7 +153,7 @@ class Game:
     def run_game(self):
         running = True
         clock = pygame.time.Clock()
-        # self.place_ship([[2, 2], [2, 3], [2, 4], [2, 5]])
+        self.place_ship([[2, 2], [2, 3], [2, 4], [2, 5]])
         # self.place_ship([[8, 10], [8, 9], [8, 7], [8, 8]])
         # self.place_ship([[6, 7], [7, 7], [8, 7]])
         self.place_ship([[4, 4], [5, 4], [6, 4]])
